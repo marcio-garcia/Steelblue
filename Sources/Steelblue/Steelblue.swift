@@ -8,7 +8,7 @@ public struct Steelblue {
         self.secureStoreQueryable = secureStoreQueryable
     }
 
-    public func setValue(_ value: String, for userAccount: String) throws {
+    public func set(value: String, for userAccount: String) throws {
         guard let encodedPassword = value.data(using: .utf8) else {
             throw SecureStoreError.string2DataConversionError
         }
@@ -39,7 +39,7 @@ public struct Steelblue {
         }
     }
 
-    public func getValue(for userAccount: String) throws -> String? {
+    public func get(for userAccount: String) throws -> String? {
         var query = secureStoreQueryable.query
         query[String(kSecMatchLimit)] = kSecMatchLimitOne
         query[String(kSecReturnAttributes)] = kCFBooleanTrue
@@ -68,7 +68,7 @@ public struct Steelblue {
         }
     }
 
-    public func removeValue(for userAccount: String) throws {
+    public func remove(for userAccount: String) throws {
         var query = secureStoreQueryable.query
         query[String(kSecAttrAccount)] = userAccount
 
@@ -78,8 +78,9 @@ public struct Steelblue {
         }
     }
 
-    public func removeAllValues() throws {
-        let query = secureStoreQueryable.query
+    public func removeAll() throws {
+        var query = secureStoreQueryable.query
+        query[String(kSecMatchLimit)] = kSecMatchLimitAll
 
         let status = SecItemDelete(query as CFDictionary)
         guard status == errSecSuccess || status == errSecItemNotFound else {

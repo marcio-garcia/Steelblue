@@ -7,7 +7,7 @@ final class SteelblueTests: XCTestCase {
     var secureStoreWithInternetPwd: Steelblue!
 
     override func setUpWithError() throws {
-        super.setUp()
+        try super.setUpWithError()
 
         let genericPwdQueryable = GenericPasswordQueryable(service: "someService")
         secureStoreWithGenericPwd = Steelblue(secureStoreQueryable: genericPwdQueryable)
@@ -22,24 +22,16 @@ final class SteelblueTests: XCTestCase {
     }
 
     override func tearDownWithError() throws {
-        try? secureStoreWithGenericPwd.removeAllValues()
-        try? secureStoreWithInternetPwd.removeAllValues()
+        try secureStoreWithGenericPwd.removeAll()
+        try secureStoreWithInternetPwd.removeAll()
 
-        super.tearDown()
+        try super.tearDownWithError()
     }
 
-    func testSaveGenericPassword() {
+    func testSaveAndReadGenericPassword() {
         do {
-            try secureStoreWithGenericPwd.setValue("pwd_1234", for: "genericPassword")
-        } catch (let e) {
-            XCTFail("Saving generic password failed with \(e.localizedDescription).")
-        }
-    }
-
-    func testReadGenericPassword() {
-        do {
-            try secureStoreWithGenericPwd.setValue("pwd_1234", for: "genericPassword")
-            let password = try secureStoreWithGenericPwd.getValue(for: "genericPassword")
+            try secureStoreWithGenericPwd.set(value: "pwd_1234", for: "genericPassword2")
+            let password = try secureStoreWithGenericPwd.get(for: "genericPassword2")
             XCTAssertEqual("pwd_1234", password)
         } catch (let e) {
             XCTFail("Reading generic password failed with \(e.localizedDescription).")
@@ -48,9 +40,9 @@ final class SteelblueTests: XCTestCase {
 
     func testUpdateGenericPassword() {
         do {
-            try secureStoreWithGenericPwd.setValue("pwd_1234", for: "genericPassword")
-            try secureStoreWithGenericPwd.setValue("pwd_1235", for: "genericPassword")
-            let password = try secureStoreWithGenericPwd.getValue(for: "genericPassword")
+            try secureStoreWithGenericPwd.set(value: "pwd_1234", for: "genericPassword2")
+            try secureStoreWithGenericPwd.set(value: "pwd_1235", for: "genericPassword2")
+            let password = try secureStoreWithGenericPwd.get(for: "genericPassword2")
             XCTAssertEqual("pwd_1235", password)
         } catch (let e) {
             XCTFail("Updating generic password failed with \(e.localizedDescription).")
@@ -59,9 +51,9 @@ final class SteelblueTests: XCTestCase {
 
     func testRemoveGenericPassword() {
         do {
-            try secureStoreWithGenericPwd.setValue("pwd_1234", for: "genericPassword")
-            try secureStoreWithGenericPwd.removeValue(for: "genericPassword")
-            XCTAssertNil(try secureStoreWithGenericPwd.getValue(for: "genericPassword"))
+            try secureStoreWithGenericPwd.set(value: "pwd_1234", for: "genericPassword2")
+            try secureStoreWithGenericPwd.remove(for: "genericPassword2")
+            XCTAssertNil(try secureStoreWithGenericPwd.get(for: "genericPassword2"))
         } catch (let e) {
             XCTFail("Saving generic password failed with \(e.localizedDescription).")
         }
@@ -69,28 +61,21 @@ final class SteelblueTests: XCTestCase {
 
     func testRemoveAllGenericPasswords() {
         do {
-            try secureStoreWithGenericPwd.setValue("pwd_1234", for: "genericPassword")
-            try secureStoreWithGenericPwd.setValue("pwd_1235", for: "genericPassword2")
-            try secureStoreWithGenericPwd.removeAllValues()
-            XCTAssertNil(try secureStoreWithGenericPwd.getValue(for: "genericPassword"))
-            XCTAssertNil(try secureStoreWithGenericPwd.getValue(for: "genericPassword2"))
+            try secureStoreWithGenericPwd.set(value: "pwd_1234", for: "genericPassword")
+            try secureStoreWithGenericPwd.set(value: "pwd_1235", for: "genericPassword2")
+            
+            try secureStoreWithGenericPwd.removeAll()
+            XCTAssertNil(try secureStoreWithGenericPwd.get(for: "genericPassword"))
+            XCTAssertNil(try secureStoreWithGenericPwd.get(for: "genericPassword2"))
         } catch (let e) {
             XCTFail("Removing generic passwords failed with \(e.localizedDescription).")
         }
     }
 
-    func testSaveInternetPassword() {
+    func testSaveAndReadInternetPassword() {
         do {
-            try secureStoreWithInternetPwd.setValue("pwd_1234", for: "internetPassword")
-        } catch (let e) {
-            XCTFail("Saving Internet password failed with \(e.localizedDescription).")
-        }
-    }
-
-    func testReadInternetPassword() {
-        do {
-            try secureStoreWithInternetPwd.setValue("pwd_1234", for: "internetPassword")
-            let password = try secureStoreWithInternetPwd.getValue(for: "internetPassword")
+            try secureStoreWithInternetPwd.set(value: "pwd_1234", for: "internetPassword")
+            let password = try secureStoreWithInternetPwd.get(for: "internetPassword")
             XCTAssertEqual("pwd_1234", password)
         } catch (let e) {
             XCTFail("Reading internet password failed with \(e.localizedDescription).")
@@ -99,9 +84,9 @@ final class SteelblueTests: XCTestCase {
 
     func testUpdateInternetPassword() {
         do {
-            try secureStoreWithInternetPwd.setValue("pwd_1234", for: "internetPassword")
-            try secureStoreWithInternetPwd.setValue("pwd_1235", for: "internetPassword")
-            let password = try secureStoreWithInternetPwd.getValue(for: "internetPassword")
+            try secureStoreWithInternetPwd.set(value: "pwd_1234", for: "internetPassword")
+            try secureStoreWithInternetPwd.set(value: "pwd_1235", for: "internetPassword")
+            let password = try secureStoreWithInternetPwd.get(for: "internetPassword")
             XCTAssertEqual("pwd_1235", password)
         } catch (let e) {
             XCTFail("Updating internet password failed with \(e.localizedDescription).")
@@ -110,9 +95,9 @@ final class SteelblueTests: XCTestCase {
 
     func testRemoveInternetPassword() {
         do {
-            try secureStoreWithInternetPwd.setValue("pwd_1234", for: "internetPassword")
-            try secureStoreWithInternetPwd.removeValue(for: "internetPassword")
-            XCTAssertNil(try secureStoreWithInternetPwd.getValue(for: "internetPassword"))
+            try secureStoreWithInternetPwd.set(value: "pwd_1234", for: "internetPassword")
+            try secureStoreWithInternetPwd.remove(for: "internetPassword")
+            XCTAssertNil(try secureStoreWithInternetPwd.get(for: "internetPassword"))
         } catch (let e) {
             XCTFail("Removing internet password failed with \(e.localizedDescription).")
         }
@@ -120,24 +105,22 @@ final class SteelblueTests: XCTestCase {
 
     func testRemoveAllInternetPasswords() {
         do {
-            try secureStoreWithInternetPwd.setValue("pwd_1234", for: "internetPassword")
-            try secureStoreWithInternetPwd.setValue("pwd_1235", for: "internetPassword2")
-            try secureStoreWithInternetPwd.removeAllValues()
-            XCTAssertNil(try secureStoreWithInternetPwd.getValue(for: "internetPassword"))
-            XCTAssertNil(try secureStoreWithInternetPwd.getValue(for: "internetPassword2"))
+            try secureStoreWithInternetPwd.set(value: "pwd_1234", for: "internetPassword")
+            try secureStoreWithInternetPwd.set(value: "pwd_1235", for: "internetPassword2")
+            try secureStoreWithInternetPwd.removeAll()
+            XCTAssertNil(try secureStoreWithInternetPwd.get(for: "internetPassword"))
+            XCTAssertNil(try secureStoreWithInternetPwd.get(for: "internetPassword2"))
         } catch (let e) {
             XCTFail("Removing internet passwords failed with \(e.localizedDescription).")
         }
     }
 
     static var allTests = [
-        ("testSaveGenericPassword", testSaveGenericPassword),
-        ("testReadGenericPassword", testReadGenericPassword),
+        ("testSaveAndReadGenericPassword", testSaveAndReadGenericPassword),
         ("testUpdateGenericPassword", testUpdateGenericPassword),
         ("testRemoveGenericPassword", testRemoveGenericPassword),
         ("testRemoveAllGenericPasswords", testRemoveAllGenericPasswords),
-        ("testSaveInternetPassword", testSaveInternetPassword),
-        ("testReadInternetPassword", testReadInternetPassword),
+        ("testSaveAndReadInternetPassword", testSaveAndReadInternetPassword),
         ("testUpdateInternetPassword", testUpdateInternetPassword),
         ("testRemoveInternetPassword", testRemoveInternetPassword),
         ("testRemoveAllInternetPasswords", testRemoveAllInternetPasswords)
