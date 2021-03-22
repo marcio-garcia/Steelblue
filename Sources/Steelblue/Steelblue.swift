@@ -1,6 +1,7 @@
 import Foundation
 import Security
 
+@available(iOS 11.3, *)
 public struct Steelblue {
     let secureStoreQueryable: SecureQueryable
 
